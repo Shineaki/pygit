@@ -7,8 +7,8 @@ from enum import Enum
 from git_utils import repo_file
 
 
-class ObjectTypes(Enum):
-    object = "object"
+class ObjectTypes(str, Enum):
+    blob = "blob"
     commit = "commit"
     tree = "tree"
     tag = "tag"
@@ -87,7 +87,7 @@ def object_read(repo, sha):
                 raise Exception(f"Unknown type {fmt.decode("ascii")} for object {sha}")
 
         # Call constructor and return object
-        return c(raw[y + 1:])
+        return c(raw[y + 1 :])
 
 
 def object_write(obj: GitObject, repo=None):
@@ -114,6 +114,26 @@ def object_find(repo, name, fmt=None, follow=True):
     return name
 
 
-def cat_file(repo, obj, fmt=None):
+def call_cat_file(repo, obj, fmt=None):
     obj = object_read(repo, object_find(repo, obj, fmt=fmt))
     sys.stdout.buffer.write(obj.serialize())
+
+
+def object_hash(fd, fmt, repo=None):
+    """Hash object, writing it to repo if provided."""
+    data = fd.read()
+
+    # Choose constructor according to fmt argument
+    match fmt:
+        case b"commit":
+            obj = GitCommit(data)
+        case b"tree":
+            obj = GitTree(data)
+        case b"tag":
+            obj = GitTag(data)
+        case b"blob":
+            obj = GitBlob(data)
+        case _:
+            raise Exception(f"Unknown type {fmt}!")
+
+    return object_write(obj, repo)
