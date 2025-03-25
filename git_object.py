@@ -95,6 +95,7 @@ def object_write(obj: GitObject, repo=None):
     data = obj.serialize()
     # Add header
     result = obj.fmt + b" " + str(len(data)).encode() + b"\x00" + data
+
     # Compute hash
     sha = hashlib.sha1(result).hexdigest()
 
