@@ -1,8 +1,17 @@
 import hashlib
 import os
+import sys
 import zlib
+from enum import Enum
 
 from git_utils import repo_file
+
+
+class ObjectTypes(Enum):
+    object = "object"
+    commit = "commit"
+    tree = "tree"
+    tag = "tag"
 
 
 class GitObject(object):
@@ -99,3 +108,12 @@ def object_write(obj: GitObject, repo=None):
                 # Compress and write
                 f.write(zlib.compress(result))
     return sha
+
+
+def object_find(repo, name, fmt=None, follow=True):
+    return name
+
+
+def cat_file(repo, obj, fmt=None):
+    obj = object_read(repo, object_find(repo, obj, fmt=fmt))
+    sys.stdout.buffer.write(obj.serialize())
