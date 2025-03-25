@@ -1,16 +1,6 @@
 
-import argparse
 import configparser
-import grp
-import hashlib
 import os
-import pwd
-import re
-import sys
-import zlib
-from datetime import datetime
-from fnmatch import fnmatch
-from math import ceil
 
 from git_utils import repo_default_config, repo_dir, repo_file
 
